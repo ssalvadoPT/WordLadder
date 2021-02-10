@@ -9,6 +9,8 @@ namespace WordLadderTester
     {
         private WordCandidates _WordCandidates;
 
+        private DicWordsConfigurationOptions _DicWordsConfigurationOptions;
+
         private string[] _Dictionary = new string[]
                 {
                     "spin",
@@ -26,7 +28,13 @@ namespace WordLadderTester
         [SetUp]
         public void Setup()
         {
-            _WordCandidates = new(_Dictionary, 4);
+            _DicWordsConfigurationOptions = new()
+            {
+                AllowSpecialCharacters = false,
+                WordLength = 4
+            };
+
+            _WordCandidates = new(_DicWordsConfigurationOptions);
         }
 
         /// <summary>
@@ -49,17 +57,14 @@ namespace WordLadderTester
         }
 
         /// <summary>
-        /// This test will reveal if we can discard any unwanted words (not the correct lengt, invalida characters, or not candidates to any word)
+        /// This test will reveal if we can discard any unwanted words (not the correct lengt, invalid characters, or not candidates to any word)
         /// </summary>
         /// <param name="numberCharacters"></param>
         /// <param name="expected"></param>
-        [TestCase(6, 1)]
-        [TestCase(5, 0)]
-        [TestCase(4, 6)]
-        [TestCase(3, 1)]
-        public void TestOptimizeDictionary(int numberCharacters, int expected)
+        [TestCase(6)]
+        public void TestOptimizeDictionary(int expected)
         {
-            var optimized = _WordCandidates.OptimizeDictionary(_Dictionary, numberCharacters);
+            var optimized = _WordCandidates.OptimizeDictionary(_Dictionary);
             Assert.IsTrue(optimized.Length == expected, $"There should be {expected} words in the optimized dictionary");
         }
 
@@ -73,8 +78,12 @@ namespace WordLadderTester
         [TestCase("spat", 3)]
         public void TestWordCandidates(string value, int expected)
         {
+            _WordCandidates.Initialize(_Dictionary);
+
             Assert.IsTrue(_WordCandidates.Candidates[value].Length == expected, 
                 $"There should be {expected} candidates for the word «{value}»");
         }
+
+
     }
 }

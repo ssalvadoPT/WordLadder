@@ -12,30 +12,40 @@ namespace WordLadder.Models
     /// </summary>
     public class WordCandidates
     {
+        private DicWordsConfigurationOptions _ConfigurationOptions = null;
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="dictionary"></param>
         /// <param name="numberCharacters"></param>
-        public WordCandidates(string[] dictionary, int numberCharacters)
+        public WordCandidates(DicWordsConfigurationOptions configurationOptions)
         {
-            var filteredDictionary = OptimizeDictionary(dictionary, numberCharacters);
-            foreach (var word in filteredDictionary)
-            {
-                //the wordCandidates are the ones that have weigth equal to (length-1) (4-1) = 3 
-                //if a word is 4 characters long, a weight 3 means that one 1 letter is different. 
-                //the others remain equal, and in the same position
-                var wordCandidates = filteredDictionary.Where(w => GetWeight(w, word) == numberCharacters-1).ToArray();
-                //the words that have no adjacent step can be removed, they are dead ends.
-                if (wordCandidates.Length > 0)
-                    Candidates[word] = wordCandidates;
-            }
+            _ConfigurationOptions = configurationOptions;
+            
         }
 
         /// <summary>
         /// All candidates for an existing word in the dictionary
         /// </summary>
         public Dictionary<string, string[]> Candidates { get; } = new();
+
+
+        public void Initialize(string[] dictionary)
+        {
+            var filteredDictionary = OptimizeDictionary(dictionary);
+            foreach (var word in filteredDictionary)
+            {
+                //the wordCandidates are the ones that have weigth equal to (length-1) (4-1) = 3 
+                //if a word is 4 characters long, a weight 3 means that one 1 letter is different. 
+                //the others remain equal, and in the same position
+                var wordCandidates = filteredDictionary.Where(w => GetWeight(w, word) == _ConfigurationOptions.WordLength - 1).ToArray();
+                //the words that have no adjacent step can be removed, they are dead ends.
+                if (wordCandidates.Length > 0)
+                    Candidates[word] = wordCandidates;
+            }
+        }
+
 
         /// <summary>
         /// Filter all words that aren't words (ie: have other characters than letters). 
@@ -45,11 +55,11 @@ namespace WordLadder.Models
         /// <param name="dictionary"></param>
         /// <param name="numberCharacters"></param>
         /// <returns></returns>
-        public string[] OptimizeDictionary(string[] dictionary, int numberCharacters)
+        public string[] OptimizeDictionary(string[] dictionary)
         {
             return dictionary
-                .Where(w => w.Length == numberCharacters && 
-                            w.All(Char.IsLetter))
+                .Where(w => w.Length == _ConfigurationOptions.WordLength &&
+                            (_ConfigurationOptions.AllowSpecialCharacters || w.All(Char.IsLetter)))
                 .Select(w => w.ToLower()).ToArray();
         }
 

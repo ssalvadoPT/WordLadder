@@ -47,15 +47,21 @@ namespace WordLadder
                 return;
             }
 
-            //Get all word candidates for each word in dictionary
-            var wordCandidates = new WordCandidates(dictionary, 4);
-
-            if (!wordCandidates.Candidates.Keys.Contains(args[1]) ||
-                !wordCandidates.Candidates.Keys.Contains(args[2]))
+            if (!dictionary.Contains(args[1]) ||
+                !dictionary.Contains(args[2]))
             {
                 Console.WriteLine($"Both StartWord and EndWord must exist in the given dictionary");
                 return;
             }
+
+            //Get rid of the words with special characters and get only the words with 4 characters
+            WordCandidates wordCandidates = new(new DicWordsConfigurationOptions
+            {
+                AllowSpecialCharacters = false,
+                WordLength = 4
+            });
+
+            wordCandidates.Initialize(dictionary);
 
             ShortestPathFinder shortestPathFinder = new()
             {
@@ -64,9 +70,10 @@ namespace WordLadder
                 EndWord = args[2]
             };
 
-
             //Get the word ladder steps
             string solution = shortestPathFinder.GetShortestPath();
+
+            /*Solution 2 */
 
             if (String.IsNullOrEmpty(solution))
             {
@@ -78,63 +85,6 @@ namespace WordLadder
             File.WriteAllText(arguments.ResultFile, solution);
 
             Console.WriteLine($"Final results \"{solution}\" written to results file.");
-
-
-
-
-            ////Initialize first step of the ladder, with the StartWord
-            //var step = new WordLadderStep
-            //{
-            //    CurrentWord = arguments.StartWord,
-            //    FinalWord = arguments.EndWord
-            //};
-            ////Trace this word step
-            //step.TraceWord(arguments.StartWord);
-
-            ////Repeat these till our last iteration word is the one we want (EndWord)
-            //while (step.Iterations.Last() != step.FinalWord)
-            //{
-            //    //#1 Get candidates for current stepword (skip any words already iterated, and any that was blacklisted)
-            //    var candidates = dictionary
-            //    .Where(w => w.Length == 4 &&
-            //        step.WordIsCandidate(w) &&
-            //        !step.Iterations.Contains(w) &&
-            //        !step.FailedIterations.Contains(w))
-            //    .Select(w => new StepCandidate
-            //    {
-            //        CurrentWord = w,
-            //        FinalWord = arguments.EndWord
-            //    });
-            //    //#2 If any candidate is found, choose the one with higher weight (same characters in the same place that the EndWord)
-            //    if (candidates.Any())
-            //    {
-            //        var bestCandidate = candidates.First(c => c.Weight == candidates.Max(w => w.Weight));
-            //        //Set this candidate to be the next word step
-            //        step.CurrentWord = bestCandidate.CurrentWord;
-            //        //Trace this word step
-            //        step.TraceWord(bestCandidate.CurrentWord);
-            //    }
-            //    else
-            //    {
-            //        //If there are no candidates in the first step (StartWord), puzzle is impossible to solve with current StartWord 
-            //        //and current dictionary file.
-            //        if (step.CurrentWord == arguments.StartWord)
-            //        {
-            //            Console.WriteLine($"Impossible to solve. No word to match \"{step.CurrentWord}\" in the given dictionary.");
-            //            return;
-            //        }
-
-            //        //Take a step back, and find a different candidate
-            //        step.BlackListWord(step.CurrentWord);
-            //        step.CurrentWord = step.Iterations.Last();
-            //    }
-
-            //}
-
-            ////Write file with solution
-            //File.WriteAllText(arguments.ResultFile, String.Join(" - ", step.Iterations.ToArray()));
-
-            //Console.WriteLine($"Final results \"{String.Join(" - ", step.Iterations.ToArray())}\" written to results file.");
         }
     }
 }
