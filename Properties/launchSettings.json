@@ -2,7 +2,7 @@
   "profiles": {
     "WordLadder": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\sergiosalvado\\Documents\\Sergio\\BluePrism\\words-english.txt\" \"calf\" \"Adam\" \"C:\\Users\\sergiosalvado\\Documents\\Sergio\\BluePrism\\result.txt\""
+      "commandLineArgs": "\"C:\\Users\\sergiosalvado\\Documents\\Sergio\\BluePrism\\words-english.txt\" \"spin\" \"spot\" \"C:\\Users\\sergiosalvado\\Documents\\Sergio\\BluePrism\\result.txt\""
     }
   }
 }

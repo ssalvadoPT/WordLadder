@@ -7,14 +7,18 @@ namespace WordLadder
 {
     class Program
     {
-        private static  WordLadderStep _word;
-
         static void Main(string[] args)
         {
             //check all parameters are provided
             if (args.Length != 4)
             {
                 Console.WriteLine("Please provide all the inputs");
+                return;
+            }
+
+            if (args[1].Length != args[2].Length || args[1].Length != 4)
+            {
+                Console.WriteLine($"The StartWord and EndWord must both be 4 characters long.");
                 return;
             }
 
@@ -37,72 +41,100 @@ namespace WordLadder
             //Read textFile
             string[] dictionary = File.ReadAllLines(arguments.DictionaryFile);
 
-            //Initialize first step of the ladder
-            var step = new WordLadderStep
+            if (dictionary.Length == 0)
             {
-                CurrentWord = arguments.StartWord,
-                FinalWord = arguments.EndWord
-            };
-            step.TraceWord(arguments.StartWord);
-
-            //#1 Get candidates for StartWord (the ones that has weight equal one)
-
-            while (step.Iterations.Last() != step.FinalWord)
-            {
-                var candidates = dictionary
-                .Where(w => w.Length == 4 &&
-                    step.WordIsCandidate(w) &&
-                    !step.Iterations.Contains(w) &&
-                    !step.FailedIterations.Contains(w))
-                .Select(w => new StepCandidate
-                {
-                    CurrentWord = w,
-                    FinalWord = arguments.EndWord
-                })
-                .OrderByDescending(w => w.Weight);
-
-                if (candidates.Count() > 0)
-                {
-                    var bestCandidate = candidates.First(c => c.Weight == candidates.Max(w => w.Weight));
-                    step.CurrentWord = bestCandidate.CurrentWord;
-                    step.TraceWord(bestCandidate.CurrentWord);
-                }
-                else
-                {
-                    if (step.CurrentWord == arguments.StartWord)
-                    {
-                        Console.WriteLine($"Impossible to solve. No word to match \"{step.CurrentWord}\" in the given dictionary.");
-                        return;
-                    }
-                        
-                    step.BlackListWord(step.CurrentWord);
-                    step.CurrentWord = step.Iterations.Last();
-                }
-
+                Console.WriteLine($"dictionary file is empty");
+                return;
             }
 
-            File.WriteAllText(arguments.ResultFile, String.Join(" - ", step.Iterations.ToArray()));
-            
+            //Get all word candidates for each word in dictionary
+            var wordCandidates = new WordCandidates(dictionary, 4);
 
-            //var num = candidates.Count();
+            if (!wordCandidates.Candidates.Keys.Contains(args[1]) ||
+                !wordCandidates.Candidates.Keys.Contains(args[2]))
+            {
+                Console.WriteLine($"Both StartWord and EndWord must exist in the given dictionary");
+                return;
+            }
 
-            //#2 Assign weights to candidates (weight according resemblance to EndWord)
+            ShortestPathFinder shortestPathFinder = new()
+            {
+                WordCandidates = wordCandidates.Candidates,
+                StartWord = args[1],
+                EndWord = args[2]
+            };
 
-            //#3 Choose candidates that has higher weight
 
-            //Repeat the process for each chosen word #1, #2 #3
+            //Get the word ladder steps
+            string solution = shortestPathFinder.GetShortestPath();
 
-            //Stop when any of the candidates in step #1 is the EndWord
+            if (String.IsNullOrEmpty(solution))
+            {
+                Console.WriteLine($"No solution found for the given words.");
+                return;
+            }
 
-            Console.WriteLine("Hello World!");
-        }
+            //Write file with solution
+            File.WriteAllText(arguments.ResultFile, solution);
 
-        public static int GetWeight(string candidate, string finalWord)
-        {
-            int weight = 0;
-            for (int i = 0; i < candidate.Length; i++)
-                weight += Convert.ToInt32(candidate[i] == finalWord[i]);
-            return weight;
+            Console.WriteLine($"Final results \"{solution}\" written to results file.");
+
+
+
+
+            ////Initialize first step of the ladder, with the StartWord
+            //var step = new WordLadderStep
+            //{
+            //    CurrentWord = arguments.StartWord,
+            //    FinalWord = arguments.EndWord
+            //};
+            ////Trace this word step
+            //step.TraceWord(arguments.StartWord);
+
+            ////Repeat these till our last iteration word is the one we want (EndWord)
+            //while (step.Iterations.Last() != step.FinalWord)
+            //{
+            //    //#1 Get candidates for current stepword (skip any words already iterated, and any that was blacklisted)
+            //    var candidates = dictionary
+            //    .Where(w => w.Length == 4 &&
+            //        step.WordIsCandidate(w) &&
+            //        !step.Iterations.Contains(w) &&
+            //        !step.FailedIterations.Contains(w))
+            //    .Select(w => new StepCandidate
+            //    {
+            //        CurrentWord = w,
+            //        FinalWord = arguments.EndWord
+            //    });
+            //    //#2 If any candidate is found, choose the one with higher weight (same characters in the same place that the EndWord)
+            //    if (candidates.Any())
+            //    {
+            //        var bestCandidate = candidates.First(c => c.Weight == candidates.Max(w => w.Weight));
+            //        //Set this candidate to be the next word step
+            //        step.CurrentWord = bestCandidate.CurrentWord;
+            //        //Trace this word step
+            //        step.TraceWord(bestCandidate.CurrentWord);
+            //    }
+            //    else
+            //    {
+            //        //If there are no candidates in the first step (StartWord), puzzle is impossible to solve with current StartWord 
+            //        //and current dictionary file.
+            //        if (step.CurrentWord == arguments.StartWord)
+            //        {
+            //            Console.WriteLine($"Impossible to solve. No word to match \"{step.CurrentWord}\" in the given dictionary.");
+            //            return;
+            //        }
+
+            //        //Take a step back, and find a different candidate
+            //        step.BlackListWord(step.CurrentWord);
+            //        step.CurrentWord = step.Iterations.Last();
+            //    }
+
+            //}
+
+            ////Write file with solution
+            //File.WriteAllText(arguments.ResultFile, String.Join(" - ", step.Iterations.ToArray()));
+
+            //Console.WriteLine($"Final results \"{String.Join(" - ", step.Iterations.ToArray())}\" written to results file.");
         }
     }
 }
