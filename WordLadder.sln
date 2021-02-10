@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordLadder", "WordLadder.csproj", "{31DEEE07-0D23-4210-8A30-02380838D00F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordLadder", "WordLadder\WordLadder.csproj", "{31DEEE07-0D23-4210-8A30-02380838D00F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordLadderTester", "..\WordLadderTester\WordLadderTester.csproj", "{6FF91847-F634-4D8B-A888-7B535362F2A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordLadderTester", "WordLadderTester\WordLadderTester.csproj", "{ACE30F74-799D-405B-8FD8-66969A950628}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{31DEEE07-0D23-4210-8A30-02380838D00F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31DEEE07-0D23-4210-8A30-02380838D00F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31DEEE07-0D23-4210-8A30-02380838D00F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6FF91847-F634-4D8B-A888-7B535362F2A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6FF91847-F634-4D8B-A888-7B535362F2A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6FF91847-F634-4D8B-A888-7B535362F2A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6FF91847-F634-4D8B-A888-7B535362F2A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACE30F74-799D-405B-8FD8-66969A950628}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACE30F74-799D-405B-8FD8-66969A950628}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACE30F74-799D-405B-8FD8-66969A950628}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACE30F74-799D-405B-8FD8-66969A950628}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
