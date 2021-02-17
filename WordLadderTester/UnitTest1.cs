@@ -11,6 +11,8 @@ namespace WordLadderTester
 
         private DicWordsConfigurationOptions _DicWordsConfigurationOptions;
 
+        private ShortestPathFinder _ShortestPathFinder;
+
         private string[] _Dictionary = new string[]
                 {
                     "spin",
@@ -35,6 +37,7 @@ namespace WordLadderTester
             };
 
             _WordCandidates = new(_DicWordsConfigurationOptions);
+
         }
 
         /// <summary>
@@ -84,6 +87,24 @@ namespace WordLadderTester
                 $"There should be {expected} candidates for the word «{value}»");
         }
 
+
+        [TestCase("spin", "spot", 3)]
+        public void TestShortestPath(string value1, string value2, int expected)
+        {
+            _WordCandidates.Initialize(_Dictionary);
+
+            _ShortestPathFinder = new()
+            {
+                WordCandidates = _WordCandidates.Candidates,
+                StartWord = value1.ToLower(),
+                EndWord = value2.ToLower()
+            };
+
+            var result = _ShortestPathFinder.GetShortestPath();
+
+            Assert.IsTrue(result.Split("-").Length == expected,
+                $"There should be {expected} steps in the word ladder «{value1}» - «{value2}»");
+        }
 
     }
 }
