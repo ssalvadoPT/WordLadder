@@ -41,7 +41,7 @@ namespace WordLadder.Models
                 //the others remain equal, and in the same position
                 var wordCandidates = filteredDictionary.Where(w => GetWeight(w, word) == _ConfigurationOptions.WordLength - 1).ToArray();
                 //the words that have no adjacent step can be removed, they are dead ends.
-                if (wordCandidates.Length > 0)
+                //if (wordCandidates.Length > 0)
                     Candidates[word] = wordCandidates;
             }
         }

@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using WordLadder.Models;
+using WordLadder.Models2;
 
 namespace WordLadder
 {
-    class Program
+    class Program2
     {
         static void Main(string[] args)
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
-
+            
             //check all parameters are provided
             if (args.Length != 4)
             {
@@ -56,7 +60,6 @@ namespace WordLadder
                 return;
             }
 
-            //Get rid of the words with special characters and get only the words with 4 characters
             WordCandidates wordCandidates = new(new DicWordsConfigurationOptions
             {
                 AllowSpecialCharacters = false,
@@ -65,31 +68,22 @@ namespace WordLadder
 
             wordCandidates.Initialize(dictionary);
 
-            ShortestPathFinder shortestPathFinder = new()
-            {
-                WordCandidates = wordCandidates.Candidates,
-                StartWord = args[1].ToLower(),
-                EndWord = args[2].ToLower()
-            };
 
-            //Get the word ladder steps
-            string solution = shortestPathFinder.GetShortestPath();
+            var ladderSteps = new LadderSteps(args[1].ToLower(), args[2].ToLower(), wordCandidates.Candidates);
 
-            /*Solution 2 */
-
-            if (String.IsNullOrEmpty(solution))
+            if (String.IsNullOrEmpty(ladderSteps.Solution))
             {
                 Console.WriteLine($"No solution found for the given words.");
                 return;
             }
 
             //Write file with solution
-            File.WriteAllText(arguments.ResultFile, solution);
+            File.WriteAllText(arguments.ResultFile, ladderSteps.Solution);
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
 
-            Console.WriteLine($"Final results \"{solution}\" written to results file. Elapsed time: {elapsedMs} milliseconds.");
+            Console.WriteLine($"Final results \"{ladderSteps.Solution}\" written to results file. Elapsed time: {elapsedMs} milliseconds");
 
         }
     }

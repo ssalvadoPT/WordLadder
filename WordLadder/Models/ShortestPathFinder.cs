@@ -69,7 +69,15 @@ namespace WordLadder.Models
                     _WordPossibilities[candidate] = currentWord;
                 }
                 //Get next candidate to find possible candidates
-                currentWord = _WordPossibilities.Keys.ElementAt(index++);
+                try
+                {
+                    currentWord = _WordPossibilities.Keys.ElementAt(index++);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    //Means there are no candidates for a word. Reached a dead end.
+                    return "";
+                }
                 //Get the candidates for this candidate, but don't get the ones that we already iterate
                 candidates = WordCandidates[currentWord].Where(w => !_WordPossibilities.Keys.Contains(w)).ToArray();
             }
